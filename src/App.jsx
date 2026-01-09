@@ -1,34 +1,43 @@
-import React, { useEffect, useState } from 'react';
-import { healthCheck } from "./api/backend";
+// This is the main file where all our website parts come together
+import React, { useState } from 'react';
 import Header from './components/Header';
 import HeroSection from './components/HeroSection';
 import MechanicsListSection from './components/MechanicsListSection';
 import AboutSection from './components/AboutSection';
 import Footer from './components/Footer';
 
-function App() {
-    const [vehicleType, setVehicleType] = useState("4w");
+function App() {   //we use this to remember if the user wants a car mechanic or bike mechanic
+  const [selectedVehicleType, setSelectedVehicleType] = useState("");
 
-    useEffect(() => {
-    fetch("http://localhost:4000/api/health")
-      .then(res => res.json())
-      .then(data => setMessage(data.message))
-      .catch(err => console.error(err));
-  }, []);
-
-
-  return (
-    <div className="antialiased font-sans bg-dark-bg min-h-screen text-white">
+  return (     //this div sets the main look:white background and black text
+    <div className="min-h-screen bg-white text-black flex flex-col">
       <Header />
-      <main className="mx-auto max-w-6xl px-4 pt-24">
-        {/* Pass state handler to Hero to update selection */}
-        <HeroSection onVehicleTypeChange={setVehicleType} />
-        
-        {/* Pass current state to list section to filter mechanics */}
-        <MechanicsListSection selectedVehicleType={vehicleType} />
-        
-        <AboutSection />
+      
+      <main className="max-w-[1440px] mx-auto px-10 flex-grow">
+        {!selectedVehicleType ? (  /* The first section where users pick their vehicle type*/
+          <div className="py-16">
+            <AboutSection />  {/* A section that explains what our company does*/}
+            <div className="mt-20">
+              <HeroSection onVehicleTypeChange={setSelectedVehicleType} />
+            </div>
+          </div>
+        ) : (
+          <div className="py-16">
+            <div className="flex justify-between items-center mb-10 border-b-4 border-black pb-8">
+              <h2 className="text-4xl font-black uppercase italic">Available Services</h2>
+              <button 
+                onClick={() => setSelectedVehicleType("")}
+                className="bg-red-600 text-white px-8 py-3 rounded-full font-black uppercase text-xs shadow-lg hover:bg-black transition-all"
+              >
+                ← Change Search
+              </button>
+            </div>
+            <MechanicsListSection selectedVehicleType={selectedVehicleType} />
+          </div>
+        )}
       </main>
+      {/* the very bottom part of the website*/}
+
       <Footer />
     </div>
   );
